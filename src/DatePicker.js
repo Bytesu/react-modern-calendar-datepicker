@@ -41,12 +41,12 @@ const DatePicker = ({
   const [isCalendarOpen, setCalendarVisiblity] = useState(false);
 
   useEffect(() => {
-    const handleBlur = () => {
-      setCalendarVisiblity(false);
-    };
-    window.addEventListener('blur', handleBlur, false);
+    // const handleBlur = () => {
+    //   setCalendarVisiblity(false);
+    // };
+    // window.addEventListener('blur', handleBlur, false);
     return () => {
-      window.removeEventListener('blur', handleBlur, false);
+      // window.removeEventListener('blur', handleBlur, false);
     };
   }, []);
 
