@@ -7,6 +7,7 @@ import { TYPE_MUTLI_DATE, TYPE_RANGE, TYPE_SINGLE_DATE } from './shared/constant
 
 const DatePicker = ({
                       customRenderFn,
+                      renderPostion,
                       value,
                       onChange,
                       formatInputText,
@@ -85,15 +86,7 @@ const DatePicker = ({
 
     if (customRenderFn) {
 
-      const { width, height } = calendarContainerElement.current.getBoundingClientRect();
-      const inputRect = inputElement.current.getBoundingClientRect();
-      calendarContainerElement.current.style.left = (inputRect.x-width) + 'px';
-      let overflowBottom = (inputRect.y + height + inputRect.height) > clientHeight;
-      let overflowTop =(inputRect.y - height + inputRect.height)<0;
-      overflowTop = overflowTop?60:(inputRect.y - height + inputRect.height);
-      console.log({top:(overflowBottom ? overflowTop: (inputRect.y + inputRect.height))})
-      calendarContainerElement.current.style.top = (overflowBottom ? overflowTop: (inputRect.y + inputRect.height)) + 'px';
-      calendarContainerElement.current.style.zIndex = 99999;
+      renderPostion&&renderPostion()
 
     } else {
 
@@ -210,6 +203,7 @@ const DatePicker = ({
       />
       {customRenderFn ? customRenderFn({
         inputElement,
+        calendarContainerElement,
         children: isCalendarOpen ? renderCalendarFn() : null,
       }) : (isCalendarOpen && renderCalendarFn())}
     </div>
