@@ -42,12 +42,12 @@ const DatePicker = ({
   const [isCalendarOpen, setCalendarVisiblity] = useState(false);
 
   useEffect(() => {
-    // const handleBlur = () => {
-    //   setCalendarVisiblity(false);
-    // };
-    // window.addEventListener('blur', handleBlur, false);
+    const handleBlur = () => {
+      setCalendarVisiblity(false);
+    };
+    window.addEventListener('blur', handleBlur, false);
     return () => {
-      // window.removeEventListener('blur', handleBlur, false);
+      window.removeEventListener('blur', handleBlur, false);
     };
   }, []);
 
@@ -70,7 +70,7 @@ const DatePicker = ({
     } else if (isInnerElementFocused && e.relatedTarget) {
       e.relatedTarget.focus();
     } else {
-      // setCalendarVisiblity(false);
+      setCalendarVisiblity(false);
     }
   };
 
@@ -128,8 +128,8 @@ const DatePicker = ({
   const handleCalendarChange = newValue => {
     const valueType = getValueType(value);
     onChange(newValue);
-    if (valueType === TYPE_SINGLE_DATE) ;// setCalendarVisiblity(false);
-    else if (valueType === TYPE_RANGE && newValue.from && newValue.to) ;//setCalendarVisiblity(false);
+    if (valueType === TYPE_SINGLE_DATE) setCalendarVisiblity(false);
+    else if (valueType === TYPE_RANGE && newValue.from && newValue.to) setCalendarVisiblity(false);
   };
 
   const handleKeyUp = ({ key }) => {
