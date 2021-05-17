@@ -86,7 +86,7 @@ const DatePicker = ({
 
     if (customRenderFn) {
 
-      renderPostion&&renderPostion()
+      renderPostion&&renderPostion({calendarContainerElement,inputElement})
 
     } else {
 

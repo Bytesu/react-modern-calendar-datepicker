@@ -54,7 +54,7 @@ export interface DatePickerProps<TValue extends Value> extends CalendarProps<TVa
   inputPlaceholder?: string;
   formatInputText?: () => string;
   customRenderFn?: (props) => ReactPortal;
-  renderPostion?: () => void;
+  renderPostion?: (props) => void;
   renderInput?: React.FC<RenderInputProps>;
 }
 
