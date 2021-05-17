@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ReactPortal} from 'react';
 
 export type Day = {
   year: number;
@@ -53,6 +53,7 @@ export interface DatePickerProps<TValue extends Value> extends CalendarProps<TVa
   calendarPopperPosition?: 'auto' | 'top' | 'bottom';
   inputPlaceholder?: string;
   formatInputText?: () => string;
+  customRenderFn?: (props) => ReactPortal;
   renderInput?: React.FC<RenderInputProps>;
 }
 
