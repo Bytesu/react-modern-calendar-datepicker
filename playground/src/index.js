@@ -8,7 +8,7 @@ import {Other} from './other';
 
 const App = () => {
   const [selectedDay, setValue] = useState(null);
-  return <div style={{textAlign:'right',marginTop:'50px',}}>
+  return <div style={{textAlign:'right',marginTop:'150px',}}>
     <DatePicker
       customRenderFn={Other}
       value={selectedDay} onChange={setValue} shouldHighlightWeekends />
