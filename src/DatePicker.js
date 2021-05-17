@@ -87,7 +87,7 @@ const DatePicker = ({
 
       const { width, height } = calendarContainerElement.current.getBoundingClientRect();
       const inputRect = inputElement.current.getBoundingClientRect();
-      calendarContainerElement.current.style.left = inputRect.x + 'px';
+      calendarContainerElement.current.style.left = (inputRect.x-width) + 'px';
       let overflowBottom = (inputRect.y + height + inputRect.height) > clientHeight;
       let overflowTop =(inputRect.y - height + inputRect.height)<0;
       overflowTop = overflowTop?60:(inputRect.y - height + inputRect.height);
