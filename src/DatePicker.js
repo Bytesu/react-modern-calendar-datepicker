@@ -1,40 +1,41 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { Calendar } from './Calendar';
 import DatePickerInput from './DatePickerInput';
 import { getValueType } from './shared/generalUtils';
-import { TYPE_SINGLE_DATE, TYPE_MUTLI_DATE, TYPE_RANGE } from './shared/constants';
+import { TYPE_MUTLI_DATE, TYPE_RANGE, TYPE_SINGLE_DATE } from './shared/constants';
 
 const DatePicker = ({
-  value,
-  onChange,
-  formatInputText,
-  inputPlaceholder,
-  inputClassName,
-  inputName,
-  renderInput,
-  wrapperClassName,
-  calendarClassName,
-  calendarTodayClassName,
-  calendarSelectedDayClassName,
-  calendarRangeStartClassName,
-  calendarRangeBetweenClassName,
-  calendarRangeEndClassName,
-  calendarPopperPosition,
-  disabledDays,
-  onDisabledDayError,
-  colorPrimary,
-  colorPrimaryLight,
-  slideAnimationDuration,
-  minimumDate,
-  maximumDate,
-  selectorStartingYear,
-  selectorEndingYear,
-  locale,
-  shouldHighlightWeekends,
-  renderFooter,
-  customDaysClassName,
-}) => {
+                      customRenderFn,
+                      value,
+                      onChange,
+                      formatInputText,
+                      inputPlaceholder,
+                      inputClassName,
+                      inputName,
+                      renderInput,
+                      wrapperClassName,
+                      calendarClassName,
+                      calendarTodayClassName,
+                      calendarSelectedDayClassName,
+                      calendarRangeStartClassName,
+                      calendarRangeBetweenClassName,
+                      calendarRangeEndClassName,
+                      calendarPopperPosition,
+                      disabledDays,
+                      onDisabledDayError,
+                      colorPrimary,
+                      colorPrimaryLight,
+                      slideAnimationDuration,
+                      minimumDate,
+                      maximumDate,
+                      selectorStartingYear,
+                      selectorEndingYear,
+                      locale,
+                      shouldHighlightWeekends,
+                      renderFooter,
+                      customDaysClassName,
+                    }) => {
   const calendarContainerElement = useRef(null);
   const inputElement = useRef(null);
   const shouldPreventToggle = useRef(false);
@@ -69,7 +70,7 @@ const DatePicker = ({
     } else if (isInnerElementFocused && e.relatedTarget) {
       e.relatedTarget.focus();
     } else {
-      setCalendarVisiblity(false);
+      // setCalendarVisiblity(false);
     }
   };
 
@@ -80,39 +81,52 @@ const DatePicker = ({
   // Keep the calendar in the screen bounds if input is near the window edges
   useLayoutEffect(() => {
     if (!isCalendarOpen) return;
-    const { left, width, height, top } = calendarContainerElement.current.getBoundingClientRect();
     const { clientWidth, clientHeight } = document.documentElement;
-    const isOverflowingFromRight = left + width > clientWidth;
-    const isOverflowingFromLeft = left < 0;
-    const isOverflowingFromBottom = top + height > clientHeight;
 
-    const getLeftStyle = () => {
-      const overflowFromRightDistance = left + width - clientWidth;
+    if (customRenderFn) {
 
-      if (!isOverflowingFromRight && !isOverflowingFromLeft) return;
-      const overflowFromLeftDistance = Math.abs(left);
-      const rightPosition = isOverflowingFromLeft ? overflowFromLeftDistance : 0;
+      const { width, height } = calendarContainerElement.current.getBoundingClientRect();
+      const inputRect = inputElement.current.getBoundingClientRect();
+      calendarContainerElement.current.style.left = inputRect.x + 'px';
+      let overflowBottom = (inputRect.y + height + inputRect.height) > clientHeight;
+      calendarContainerElement.current.style.top = (overflowBottom ? (inputRect.y - height + inputRect.height) : (inputRect.y + inputRect.height)) + 'px';
 
-      const leftStyle = isOverflowingFromRight
-        ? `calc(50% - ${overflowFromRightDistance}px)`
-        : `calc(50% + ${rightPosition}px)`;
-      return leftStyle;
-    };
+    } else {
 
-    calendarContainerElement.current.style.left = getLeftStyle();
-    if (
-      (calendarPopperPosition === 'auto' && isOverflowingFromBottom) ||
-      calendarPopperPosition === 'top'
-    ) {
-      calendarContainerElement.current.classList.add('-top');
+      const { left, width, height, top } = calendarContainerElement.current.getBoundingClientRect();
+
+      const isOverflowingFromRight = left + width > clientWidth;
+      const isOverflowingFromLeft = left < 0;
+      const isOverflowingFromBottom = top + height > clientHeight;
+
+      const getLeftStyle = () => {
+        const overflowFromRightDistance = left + width - clientWidth;
+
+        if (!isOverflowingFromRight && !isOverflowingFromLeft) return;
+        const overflowFromLeftDistance = Math.abs(left);
+        const rightPosition = isOverflowingFromLeft ? overflowFromLeftDistance : 0;
+
+        const leftStyle = isOverflowingFromRight
+          ? `calc(50% - ${overflowFromRightDistance}px)`
+          : `calc(50% + ${rightPosition}px)`;
+        return leftStyle;
+      };
+
+      calendarContainerElement.current.style.left = getLeftStyle();
+      if (
+        (calendarPopperPosition === 'auto' && isOverflowingFromBottom) ||
+        calendarPopperPosition === 'top'
+      ) {
+        calendarContainerElement.current.classList.add('-top');
+      }
     }
   }, [isCalendarOpen]);
 
   const handleCalendarChange = newValue => {
     const valueType = getValueType(value);
     onChange(newValue);
-    if (valueType === TYPE_SINGLE_DATE) setCalendarVisiblity(false);
-    else if (valueType === TYPE_RANGE && newValue.from && newValue.to) setCalendarVisiblity(false);
+    if (valueType === TYPE_SINGLE_DATE) ;// setCalendarVisiblity(false);
+    else if (valueType === TYPE_RANGE && newValue.from && newValue.to) ;//setCalendarVisiblity(false);
   };
 
   const handleKeyUp = ({ key }) => {
@@ -133,7 +147,45 @@ const DatePicker = ({
       shouldPreventToggle.current = false;
     }
   }, [shouldPreventToggle, isCalendarOpen]);
-
+  const renderCalendarFn = React.useCallback(() => {
+    return <>
+      <div
+        ref={calendarContainerElement}
+        className="DatePicker__calendarContainer"
+        data-testid="calendar-container"
+        role="presentation"
+        onMouseDown={() => {
+          shouldPreventToggle.current = true;
+        }}
+      >
+        <Calendar
+          value={value}
+          onChange={handleCalendarChange}
+          calendarClassName={calendarClassName}
+          calendarTodayClassName={calendarTodayClassName}
+          calendarSelectedDayClassName={calendarSelectedDayClassName}
+          calendarRangeStartClassName={calendarRangeStartClassName}
+          calendarRangeBetweenClassName={calendarRangeBetweenClassName}
+          calendarRangeEndClassName={calendarRangeEndClassName}
+          disabledDays={disabledDays}
+          colorPrimary={colorPrimary}
+          colorPrimaryLight={colorPrimaryLight}
+          slideAnimationDuration={slideAnimationDuration}
+          onDisabledDayError={onDisabledDayError}
+          minimumDate={minimumDate}
+          maximumDate={maximumDate}
+          selectorStartingYear={selectorStartingYear}
+          selectorEndingYear={selectorEndingYear}
+          locale={locale}
+          shouldHighlightWeekends={shouldHighlightWeekends}
+          renderFooter={renderFooter}
+          customDaysClassName={customDaysClassName}
+        />
+      </div>
+      <div className="DatePicker__calendarArrow"/>
+    </>;
+  }, [calendarContainerElement, shouldPreventToggle, value, handleCalendarChange, calendarClassName, calendarTodayClassName, calendarSelectedDayClassName, calendarRangeStartClassName, calendarRangeBetweenClassName, calendarRangeEndClassName, disabledDays, colorPrimary, colorPrimaryLight, slideAnimationDuration,
+    onDisabledDayError, minimumDate, maximumDate, selectorStartingYear, selectorEndingYear, locale, shouldHighlightWeekends, renderFooter, customDaysClassName]);
   return (
     <div
       onFocus={openCalendar}
@@ -152,44 +204,10 @@ const DatePicker = ({
         inputName={inputName}
         locale={locale}
       />
-      {isCalendarOpen && (
-        <>
-          <div
-            ref={calendarContainerElement}
-            className="DatePicker__calendarContainer"
-            data-testid="calendar-container"
-            role="presentation"
-            onMouseDown={() => {
-              shouldPreventToggle.current = true;
-            }}
-          >
-            <Calendar
-              value={value}
-              onChange={handleCalendarChange}
-              calendarClassName={calendarClassName}
-              calendarTodayClassName={calendarTodayClassName}
-              calendarSelectedDayClassName={calendarSelectedDayClassName}
-              calendarRangeStartClassName={calendarRangeStartClassName}
-              calendarRangeBetweenClassName={calendarRangeBetweenClassName}
-              calendarRangeEndClassName={calendarRangeEndClassName}
-              disabledDays={disabledDays}
-              colorPrimary={colorPrimary}
-              colorPrimaryLight={colorPrimaryLight}
-              slideAnimationDuration={slideAnimationDuration}
-              onDisabledDayError={onDisabledDayError}
-              minimumDate={minimumDate}
-              maximumDate={maximumDate}
-              selectorStartingYear={selectorStartingYear}
-              selectorEndingYear={selectorEndingYear}
-              locale={locale}
-              shouldHighlightWeekends={shouldHighlightWeekends}
-              renderFooter={renderFooter}
-              customDaysClassName={customDaysClassName}
-            />
-          </div>
-          <div className="DatePicker__calendarArrow" />
-        </>
-      )}
+      {customRenderFn ? customRenderFn({
+        inputElement,
+        children: isCalendarOpen ? renderCalendarFn() : null,
+      }) : (isCalendarOpen && renderCalendarFn())}
     </div>
   );
 };
