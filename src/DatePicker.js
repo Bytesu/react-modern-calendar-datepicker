@@ -94,7 +94,6 @@ const DatePicker = ({
       calendarContainerElement.current.style.top = (overflowBottom ? overflowTop: (inputRect.y + inputRect.height)) + 'px';
       calendarContainerElement.current.style.zIndex = 99999;
 
-
     } else {
 
       const { left, width, height, top } = calendarContainerElement.current.getBoundingClientRect();
